@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'adoptopenjdk'  # Specify the distribution explicitly
+          distribution: 'temurin'  # Corrected distribution name for OpenJDK
 
       - name: Cache Maven dependencies
         uses: actions/cache@v2
