@@ -36,17 +36,15 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
-      - name: Send logs via email
-        if: always()  # Ensures that the email will be sent even if the previous steps failed
-        uses: dawidd6/action-send-mail@v3
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v2
         with:
-          server_address: smtp.gmail.com  # Use server_address instead of smtp-server
-          server_port: 587  # Correct port for Gmail SMTP
-          username: ${{ secrets.SMTP_USER }}  # Use username instead of smtp-user
-          password: ${{ secrets.SMTP_PASSWORD }}  # Use password instead of smtp-password
-          from: testanneline@gmail.com  # Replace with the sender's email address
-          to: annelinejcbs@gmail.com  # Replace with the recipient's email address
-          subject: "GitHub Actions Logs"
-          body: |
-            The GitHub Actions logs are attached below.
-          attachments: /home/runner/work/petfinder-api-tests/petfinder-api-tests/target/surefire-reports/*.xml
+          ref: gh-pages
+
+      - name: Copy logs to gh-pages branch
+        run: |
+          cp target/surefire-reports/*.xml ./docs/logs/
+          git add .
+          git commit -m "Add test logs"
+          git push
+
