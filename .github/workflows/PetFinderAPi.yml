@@ -42,9 +42,9 @@ jobs:
         with:
           smtp-server: smtp.gmail.com
           smtp-port: 587
-          smtp-user: ${{ secrets.SMTP_USER }}
-          smtp-password: ${{ secrets.SMTP_PASSWORD }}
-          from: annelinejcbs@gmail.com  # Add sender email here (e.g., your Gmail email address)
+          smtp-user: ${{ secrets.SMTP_USER }}  # Store the email as GitHub Secrets
+          smtp-password: ${{ secrets.SMTP_PASSWORD }}  # Store the Gmail app password as GitHub Secrets
+          from: annelinejcbs@gmail.com  # Replace with the sender's email address
           to: annelinejcbs@gmail.com  # Replace with the recipient's email address
           subject: "GitHub Actions Logs"
           body: |
