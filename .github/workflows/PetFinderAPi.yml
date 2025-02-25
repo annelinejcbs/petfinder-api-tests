@@ -44,7 +44,7 @@ jobs:
           server_port: 587  # Correct port for Gmail SMTP
           username: ${{ secrets.SMTP_USER }}  # Use username instead of smtp-user
           password: ${{ secrets.SMTP_PASSWORD }}  # Use password instead of smtp-password
-          from: annelinejcbs@gmail.com  # Replace with the sender's email address
+          from: testanneline@gmail.com  # Replace with the sender's email address
           to: annelinejcbs@gmail.com  # Replace with the recipient's email address
           subject: "GitHub Actions Logs"
           body: |
