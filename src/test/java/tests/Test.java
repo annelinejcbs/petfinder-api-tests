@@ -8,9 +8,9 @@ public class Test {
     public static void main(String[] args) {
         try {
             // Test 1: Get Access Token measuring response time of api
-            long startTime = System.currentTimeMillis(); // Start time for the first API call
+            long startTime = System.currentTimeMillis();
             String accessToken = PetOAuth2.getAccessToken();
-            long endTime = System.currentTimeMillis(); // End time after the API call
+            long endTime = System.currentTimeMillis();
             System.out.println("Access Token retrieval took " + (endTime - startTime) + " ms.");
 
             if (accessToken == null || accessToken.isEmpty()) {
