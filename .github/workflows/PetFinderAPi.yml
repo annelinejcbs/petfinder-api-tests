@@ -36,9 +36,6 @@ jobs:
       - name: Run tests with Maven
         run: mvn test
 
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v2
-        with:
-          ref: gh-pages
+
 
 
