@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'temurin'  # Corrected distribution name for OpenJDK
+          distribution: 'temurin'
 
       - name: Cache Maven dependencies
         uses: actions/cache@v2
@@ -35,3 +35,17 @@ jobs:
 
       - name: Run tests with Maven
         run: mvn test
+
+      - name: Send logs via email
+        if: always()  # Ensures that the email will be sent even if the previous steps failed
+        uses: dawidd6/action-send-mail@v3
+        with:
+          smtp-server: smtp.gmail.com
+          smtp-port: 587
+          smtp-user: ${{ secrets.SMTP_USER }}
+          smtp-password: ${{ secrets.SMTP_PASSWORD }}
+          to: annelinejcbs@gmail.com
+          subject: "GitHub Actions Logs"
+          body: |
+            The GitHub Actions logs are attached below.
+          attachments: ${{ github.workspace }}/target/surefire-reports/*.xml  # Attach the surefire report logs
