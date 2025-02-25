@@ -40,10 +40,10 @@ jobs:
         if: always()  # Ensures that the email will be sent even if the previous steps failed
         uses: dawidd6/action-send-mail@v3
         with:
-          smtp-server: smtp.gmail.com
-          smtp-port: 587
-          smtp-user: ${{ secrets.SMTP_USER }}  # Store the email as GitHub Secrets
-          smtp-password: ${{ secrets.SMTP_PASSWORD }}  # Store the Gmail app password as GitHub Secrets
+          server_address: smtp.gmail.com  # Use server_address instead of smtp-server
+          server_port: 587  # Correct port for Gmail SMTP
+          username: ${{ secrets.SMTP_USER }}  # Use username instead of smtp-user
+          password: ${{ secrets.SMTP_PASSWORD }}  # Use password instead of smtp-password
           from: annelinejcbs@gmail.com  # Replace with the sender's email address
           to: annelinejcbs@gmail.com  # Replace with the recipient's email address
           subject: "GitHub Actions Logs"
