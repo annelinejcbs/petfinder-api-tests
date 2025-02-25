@@ -44,8 +44,9 @@ jobs:
           smtp-port: 587
           smtp-user: ${{ secrets.SMTP_USER }}
           smtp-password: ${{ secrets.SMTP_PASSWORD }}
-          to: annelinejcbs@gmail.com
+          from: your-email@gmail.com  # Add sender email here (e.g., your Gmail email address)
+          to: annelinejcbs@gmail.com  # Replace with the recipient's email address
           subject: "GitHub Actions Logs"
           body: |
             The GitHub Actions logs are attached below.
-          attachments: ${{ github.workspace }}/target/surefire-reports/*.xml  # Attach the surefire report logs
+          attachments: /home/runner/work/petfinder-api-tests/petfinder-api-tests/target/surefire-reports/*.xml
