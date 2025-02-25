@@ -1,0 +1,4 @@
+tests\Test.class
+tests\PetfinderAPI.class
+common\PetOAuth2.class
+tests\PetSearch.class
