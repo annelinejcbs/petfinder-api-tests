@@ -1,9 +1,13 @@
 package tests;
 
 import common.PetOAuth2;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.Assertions;
 
 public class Test {
+
+    private static final Logger logger = LogManager.getLogger(Test.class);
 
     public static void main(String[] args) {
         try {
@@ -12,9 +16,12 @@ public class Test {
             String accessToken = PetOAuth2.getAccessToken();
             long endTime = System.currentTimeMillis();
             System.out.println("Access Token retrieval took " + (endTime - startTime) + " ms.");
+            logger.info("Access Token retrieval took " + (endTime - startTime) + " ms.");
+
 
             if (accessToken == null || accessToken.isEmpty()) {
                 System.out.println("Failed to retrieve access token.");
+                logger.info("Failed to retrieve access token.");
                 return;
             }
 
@@ -24,8 +31,10 @@ public class Test {
                     String animalTypesResponse = PetfinderAPI.getAnimalTypes(accessToken);
                     Assertions.assertTrue(animalTypesResponse.contains("Dog"), "Expected 'Dog' in animal types response");
                     System.out.println("Dog found in animal types.");
+                    logger.info("Dog found in animal types.");
                 } catch (Exception e) {
                     System.out.println("Failed to retrieve animal types: " + e.getMessage());
+                    logger.info("Failed to retrieve animal types: " + e.getMessage());
                     throw new RuntimeException(e);
                 }
             });
@@ -36,8 +45,10 @@ public class Test {
                     String dogBreedsResponse = PetfinderAPI.getDogBreeds(accessToken);
                     Assertions.assertTrue(dogBreedsResponse.contains("Golden Retriever"), "Expected 'Golden Retriever' in dog breeds response");
                     System.out.println("Golden Retriever found in dog breeds.");
+                    logger.info("Golden Retriever found in dog breeds.");
                 } catch (Exception e) {
                     System.out.println("Failed to retrieve dog breeds: " + e.getMessage());
+                    logger.info("Failed to retrieve dog breeds: " + e.getMessage());
                     throw new RuntimeException(e);
                 }
             });
@@ -48,8 +59,10 @@ public class Test {
                     String searchResults = PetSearch.searchGoldenRetriever(accessToken);
                     Assertions.assertTrue(searchResults.contains("Golden Retriever"), "Expected 'Golden Retriever' in search results");
                     System.out.println("Found Golden Retrievers in search results.");
+                    logger.info("Found Golden Retrievers in search results.");
                 } catch (Exception e) {
                     System.out.println("Failed to search Golden Retrievers: " + e.getMessage());
+                    logger.info("Found Golden Retrievers in search results.");
                     throw new RuntimeException(e);
                 }
             });
@@ -69,6 +82,7 @@ public class Test {
         long endTime = System.currentTimeMillis();
         long responseTime = endTime - startTime;
         System.out.println("API call took " + responseTime + " ms.");
+        logger.info("API call took " + responseTime + " ms.");
         Assertions.assertTrue(responseTime < 2000, "API response time exceeded 2 seconds");
     }
 
@@ -85,6 +99,7 @@ public class Test {
             } catch (Exception e) {
                 failedCalls++;
                 System.out.println("API call failed: " + e.getMessage());
+                logger.info("API call failed: " + e.getMessage());
                 // Optional: Add delay between calls to prevent server overload
                 try {
                     Thread.sleep(50); // Sleep for 50ms between calls to avoid hitting the server too hard
@@ -97,7 +112,10 @@ public class Test {
         long endTime = System.currentTimeMillis();
         double throughput = totalCalls / ((endTime - startTime) / 1000.0);
         System.out.println("Total API calls made in 1 minute: " + totalCalls);
+        logger.info("Total API calls made in 1 minute: " + totalCalls);
         System.out.println("Failed API calls: " + failedCalls);
+        logger.info("Failed API calls: " + failedCalls);
         System.out.println("Throughput: " + throughput + " calls/second");
+        logger.info("Throughput: " + throughput + " calls/second");
     }
 }
