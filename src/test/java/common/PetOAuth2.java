@@ -17,9 +17,10 @@ public class PetOAuth2 {
         // Retrieve these values from environment variables or a config file
         String clientId = System.getenv("PETFINDER_CLIENT_ID");
         String clientSecret = System.getenv("PETFINDER_CLIENT_SECRET");
+        String fallbackAccessCode = System.getenv("PETFINDER_ACCESSCODE");  // The fallback access code
 
-        if (clientId == null || clientSecret == null) {
-            throw new IllegalArgumentException("Client ID or Client Secret not provided.");
+        if (clientId == null || clientSecret == null || fallbackAccessCode == null) {
+            throw new IllegalArgumentException("Client ID, Client Secret, or Access Code not provided.");
         }
 
         try (CloseableHttpClient client = HttpClients.createDefault()) {
@@ -38,27 +39,31 @@ public class PetOAuth2 {
             System.out.println("Response Code: " + response.getStatusLine().getStatusCode());
 
             // Check for success (HTTP 200 OK)
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new RuntimeException("Failed to fetch access token. HTTP code: " + response.getStatusLine().getStatusCode());
-            }
+            if (response.getStatusLine().getStatusCode() == 200) {
+                String responseString = EntityUtils.toString(response.getEntity());
 
-            String responseString = EntityUtils.toString(response.getEntity());
+                // Parse the JSON response to extract the access token
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode root = mapper.readTree(responseString);
 
-            // Parse the JSON response to extract the access token
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(responseString);
-
-            // Validate the response for the expected 'access_token' field
-            if (root.has("access_token")) {
-                return root.get("access_token").asText();  // Return the access token
+                // Validate the response for the expected 'access_token' field
+                if (root.has("access_token")) {
+                    return root.get("access_token").asText();  // Return the access token
+                } else {
+                    throw new RuntimeException("Access token not found in response: " + responseString);
+                }
             } else {
-                throw new RuntimeException("Access token not found in response: " + responseString);
+                // If the OAuth2 request fails, pass the fallback access code directly
+                System.out.println("OAuth2 request failed, using fallback access code instead...");
+                return fallbackAccessCode;  // Return the stored fallback access code directly
             }
 
         } catch (Exception e) {
             System.err.println("Error obtaining access token: " + e.getMessage());
             e.printStackTrace(); // Log stack trace for debugging
-            throw e;  // Rethrow the exception after logging
+            // If OAuth2 fails due to an exception, return the fallback access code
+            System.out.println("Using fallback access code...");
+            return fallbackAccessCode;  // Return the fallback access code if there is an exception
         }
     }
 

@@ -8,6 +8,8 @@ import org.apache.http.util.EntityUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import static common.PetOAuth2.getAccessToken;
+
 public class PetfinderAPI {
 
     // Helper method to make the API request
@@ -35,24 +37,27 @@ public class PetfinderAPI {
         }
     }
 
-    // Getting Animal Types
+    // Step 1: Retrieve all animal types and check if Dog is found
     public static String getAnimalTypes(String accessToken) throws Exception {
         String url = "https://api.petfinder.com/v2/types";
         JsonNode root = makeApiRequest(url, accessToken);
 
         JsonNode types = root.has("types") ? root.get("types") : null;
         if (types != null) {
+
             boolean dogFound = false;
             for (JsonNode type : types) {
-                if (type.get("name").asText().equals("Dog")) {
+
+                if (type.get("name").asText().equalsIgnoreCase("Dog")) {
                     dogFound = true;
-                    break;
                 }
             }
+
+            // Step 2: Verify if "Dog" is an animal type
             if (dogFound) {
-                System.out.println("Dog is an animal type.");
+                System.out.println("Dog is one of the available animal types.");
             } else {
-                System.out.println("Dog is NOT an animal type.");
+                System.out.println("Dog is NOT an available animal type.");
             }
         } else {
             System.out.println("No animal types found in response.");
@@ -60,35 +65,73 @@ public class PetfinderAPI {
         return url;
     }
 
-    // Getting Dog Breeds
+    // Step 3: Retrieve all dog breeds
     public static String getDogBreeds(String accessToken) throws Exception {
-        String url = "https://api.petfinder.com/v2/breeds/dog";
+        String url = "https://api.petfinder.com/v2/types/dog/breeds";
         JsonNode root = makeApiRequest(url, accessToken);
 
         JsonNode breeds = root.has("breeds") ? root.get("breeds") : null;
         if (breeds != null && breeds.size() > 0) {
-            System.out.println("Dog Breeds:");
+
+            Boolean Golden_Retrieverfound = false;
+
+            // Iterate over each breed and print its name
             for (JsonNode breed : breeds) {
-                System.out.println("- " + breed.asText());
+
+                // Check if the breed is Golden Retriever
+                if (breed.get("name").asText().equalsIgnoreCase("Golden Retriever")) {
+                    Golden_Retrieverfound = true;
+                }
+            }
+
+            if (Golden_Retrieverfound) {
+                System.out.println("Golden Retriever is one of the breeds.");
+            } else {
+                System.out.println("Golden Retriever is not one of the breeds.");
             }
         } else {
-            System.out.println("No dog breeds found.");
+            System.out.println("No breed types found in response.");
         }
+
         return url;
     }
 
-    public static void main(String[] args) {
-        // Replace with a valid access token
-        String accessToken = "your-access-token-here";
+    // Step 4: Search for Golden Retriever Name
+    public static String searchGoldenRetrieverDogs(String accessToken) throws Exception {
+        String url = "https://api.petfinder.com/v2/animals?type=dog&breed=Golden%20Retriever";
+        JsonNode root = makeApiRequest(url, accessToken);
 
-        try {
-            // Get animal types and verify "Dog"
-            getAnimalTypes(accessToken);
+        JsonNode animals = root.has("animals") ? root.get("animals") : null;
+        if (animals != null && animals.isArray() && animals.size() > 0) {
+            // Get the first animal directly
+            JsonNode firstAnimal = animals.get(0);  // Access the first animal in the array
 
-            // Get dog breeds
-            getDogBreeds(accessToken);
-        } catch (Exception e) {
-            System.err.println("Error: " + e.getMessage());
+            // Print only the first animal
+            System.out.println("Found the following Golden Retriever dog:");
+            System.out.println("ID: " + firstAnimal.get("id").asText() + " | Name: " + firstAnimal.get("name").asText());
+        } else {
+            System.out.println("No Golden Retriever dogs found.");
+        }
+        return url;
+
+    }
+
+        public static void main (String[]args) throws Exception {
+            String accessToken = getAccessToken();
+            System.out.println("Access Token: " + accessToken);
+
+            try {
+                // Step 1: Get animal types and verify "Dog"
+                getAnimalTypes(accessToken);
+
+                // Step 2: Get dog breeds
+                getDogBreeds(accessToken);
+
+                // Step 3: Search for Golden Retrievers and verify results
+                searchGoldenRetrieverDogs(accessToken);
+            } catch (Exception e) {
+                System.err.println("Error: " + e.getMessage());
+            }
         }
     }
-}
+
