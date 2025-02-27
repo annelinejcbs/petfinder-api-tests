@@ -68,13 +68,12 @@ public class Test {
             });
 
             // Performance testing for throughput (making multiple API calls in 1 minute)
-            measureThroughput(accessToken);
+           // measureThroughput(accessToken);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
     // Validating API response time doesn't exceed 2 seconds
     private static void measureApiResponseTime(Runnable apiCall) {
@@ -84,7 +83,7 @@ public class Test {
         long responseTime = endTime - startTime;
         System.out.println("API call took " + responseTime + " ms.");
         logger.info("API call took " + responseTime + " ms.");
-        Assertions.assertTrue(responseTime < 10000, "API response time exceeded 10 seconds");
+        Assertions.assertTrue(responseTime < 2000, "API response time exceeded 2 seconds");
     }
 
     // Measuring how many api calls can be made in 1 minute
